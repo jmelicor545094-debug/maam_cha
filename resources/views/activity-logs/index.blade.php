@@ -1,0 +1,7 @@
+@extends('layouts.app')
+@section('title', 'Activity logs')
+@section('section', 'Activity logs')
+@section('content')
+<div class="page-heading"><div><div class="eyebrow">Audit trail</div><h1>Activity logs</h1><div class="muted">{{ auth()->user()->role === 'admin' ? 'System activity by all users.' : 'Your recent system activity.' }}</div></div><button class="btn" onclick="window.print()" title="Print activity report">▣ Print</button></div>
+<section class="panel"><div class="panel-head"><h2>Recorded actions</h2><form method="get" style="display:flex;gap:7px;flex-wrap:wrap"><input name="search" value="{{ request('search') }}" placeholder="Search module or action"><input type="date" name="from" aria-label="From date" value="{{ request('from') }}"><input type="date" name="to" aria-label="To date" value="{{ request('to') }}"><button class="btn">Filter</button></form></div><div class="table-wrap"><table><thead><tr><th>Date and time</th><th>User</th><th>Module</th><th>Action</th><th>Description</th></tr></thead><tbody>@forelse($logs as $log)<tr><td>{{ $log->created_at->format('M d, Y H:i:s') }}</td><td>{{ $log->user?->name ?? 'Deleted user' }}</td><td>{{ $log->module }}</td><td><span class="badge">{{ $log->action }}</span></td><td>{{ $log->description }}</td></tr>@empty<tr><td colspan="5" style="padding:24px;text-align:center;color:#71848b">No activity matched these filters.</td></tr>@endforelse</tbody></table></div><div class="pagination"><span>{{ $logs->total() }} entries</span>{{ $logs->links('pagination::simple-tailwind') }}</div></section>
+@endsection

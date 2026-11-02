@@ -1,0 +1,7 @@
+@extends('layouts.app')
+@section('title', 'Purchase orders')
+@section('section', 'Purchase orders')
+@section('content')
+<div class="page-heading"><div><div class="eyebrow">Procurement</div><h1>Purchase orders</h1><div class="muted">Reorder low-stock products and reconcile incoming deliveries.</div></div><a class="btn primary" href="{{ route('purchase-orders.create') }}">＋ Create purchase order</a></div>
+<section class="panel"><div class="panel-head"><h2>Order register <span class="muted">({{ $orders->total() }})</span></h2></div><div class="table-wrap"><table><thead><tr><th>Reference</th><th>Supplier</th><th>Expected</th><th>Lines</th><th>Status</th><th>Created</th><th></th></tr></thead><tbody>@forelse($orders as $order)<tr><td><strong>{{ $order->reference_number }}</strong></td><td>{{ $order->supplier->company_name }}</td><td>{{ $order->expected_at?->format('M d, Y') ?? '—' }}</td><td>{{ $order->items_count }}</td><td><span class="badge {{ $order->status === 'received' ? 'green' : ($order->status === 'cancelled' ? 'red' : '') }}">{{ ucfirst(str_replace('_', ' ', $order->status)) }}</span></td><td>{{ $order->created_at->format('M d, Y') }}</td><td><a class="btn" href="{{ route('purchase-orders.show', $order) }}">Open</a></td></tr>@empty<tr><td colspan="7" style="padding:26px;text-align:center;color:#71848b">No purchase orders yet.</td></tr>@endforelse</tbody></table></div><div class="pagination"><span>{{ $orders->total() }} orders</span>{{ $orders->links('pagination::simple-tailwind') }}</div></section>
+@endsection

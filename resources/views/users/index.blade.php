@@ -1,0 +1,8 @@
+@extends('layouts.app')
+@section('title', 'Users & access')
+@section('section', 'Users & access')
+@section('content')
+<div class="page-heading"><div><div class="eyebrow">Access control</div><h1>Users & access</h1><div class="muted">Manage accounts and assign administrator or staff access.</div></div><div class="toolbar"><a class="btn" href="{{ route('users.archived') }}">Archived users</a><a class="btn primary" href="{{ route('users.create') }}">Add user</a></div></div>
+@if($errors->has('user'))<div class="flash" style="background:#fce8e7;color:#a6423c">{{ $errors->first('user') }}</div>@endif
+<section class="panel"><div class="panel-head"><h2>Accounts</h2></div><div class="table-wrap"><table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Created</th><th>Actions</th></tr></thead><tbody>@foreach($users as $user)<tr><td><strong>{{ $user->name }}</strong>@if($user->is(auth()->user())) <span class="muted">(you)</span>@endif</td><td>{{ $user->email }}</td><td><span class="badge {{ $user->role === 'admin' ? 'green' : '' }}">{{ ucfirst($user->role) }}</span></td><td>{{ $user->created_at->format('M d, Y') }}</td><td><a class="btn" href="{{ route('users.edit', $user) }}">Edit</a> @unless($user->is(auth()->user()))<form style="display:inline" method="post" action="{{ route('users.destroy', $user) }}" onsubmit="return confirm('Archive this account?')">@csrf @method('DELETE')<button class="btn danger">Archive</button></form>@endunless</td></tr>@endforeach</tbody></table></div><div class="pagination"><span>{{ $users->total() }} accounts</span>{{ $users->links('pagination::simple-tailwind') }}</div></section>
+@endsection

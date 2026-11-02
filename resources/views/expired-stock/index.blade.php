@@ -1,0 +1,8 @@
+@extends('layouts.app')
+@section('title', 'Expired stock cleanup')
+@section('section', 'Expired stock')
+@section('content')
+<div class="page-heading"><div><div class="eyebrow">Inventory safety</div><h1>Expired stock cleanup</h1><div class="muted">Review the dry-run list before removing expired lots from available inventory.</div></div></div>
+<section class="panel"><div class="panel-head"><h2>Dry run · {{ $batches->total() }} batch(es) to clear</h2><span class="badge red">Expired stock</span></div><div class="table-wrap"><table><thead><tr><th>Product</th><th>Batch</th><th>Available units</th><th>Expiry date</th><th>Days past expiry</th></tr></thead><tbody>@forelse($batches as $batch)<tr><td><strong>{{ $batch->product->name }}</strong><div class="row-sub">{{ $batch->product->sku }}</div></td><td>{{ $batch->batch_number }}</td><td>{{ $batch->quantity }} {{ $batch->product->unit }}</td><td>{{ $batch->expires_at->format('M d, Y') }}</td><td>{{ $batch->expires_at->diffInDays(today()) }}</td></tr>@empty<tr><td colspan="5" style="padding:25px;text-align:center;color:#71848b">No expired active lots found.</td></tr>@endforelse</tbody></table></div><div class="pagination"><span>Review all matching lots before cleanup</span>{{ $batches->links('pagination::simple-tailwind') }}</div></section>
+@if($batches->total() > 0)<form method="post" action="{{ route('expired-stock.cleanup') }}" style="display:flex;justify-content:flex-end;margin-top:16px" onsubmit="return confirm('Mark all currently expired active batches as expired and record the inventory write-off? Batch history will be retained.')">@csrf<button class="btn danger">Run cleanup now</button></form>@endif
+@endsection
