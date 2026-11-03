@@ -97,7 +97,7 @@
 </head>
 <body>
 <div class="shell">
-    <header class="topbar topbar-global"><a class="topbar-brand" href="{{ route('dashboard') }}"><span class="brand-mark brand-mark--logo"><img src="/images/logo.png" alt="Davao MedCare" class="brand-logo-img"></span><span class="topbar-brand-name">Davao Medcare</span></a><span class="crumb">Operations / @yield('section', 'Overview')</span><div class="profile"><span class="avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span><span>{{ auth()->user()->name }} · {{ ucfirst(auth()->user()->role) }}</span><form method="post" action="{{ route('logout') }}">@csrf<button class="btn" type="submit" title="Sign out">Sign out</button></form></div></header>
+    <header class="topbar topbar-global"><a class="topbar-brand" href="{{ route('dashboard') }}"><span class="brand-mark brand-mark--logo"><img src="/images/logo.png" alt="Davao MedCare" class="brand-logo-img"></span><span class="topbar-brand-name">Davao Medcare</span></a><span class="crumb">Operations / @yield('section', 'Overview')</span><div class="profile">@auth <span class="avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span><span>{{ auth()->user()->name }} · {{ ucfirst(auth()->user()->role) }}</span><form method="post" action="{{ route('logout') }}">@csrf<button class="btn" type="submit" title="Sign out">Sign out</button></form>@else<a class="btn" href="{{ route('login') }}">Sign in</a>@endauth</div></header>
     <aside class="sidebar">
         <div class="brand brand--with-logo"><span class="brand-mark brand-mark--logo"><img src="/images/logo.png" alt="Davao MedCare" class="brand-logo-img"></span><span class="brand-name">Davao Medcare<br><small style="font-weight:400;color:#b8d0d3">Pharma & Supplies</small></span></div>
         <div class="nav-label">Management</div>
@@ -115,7 +115,7 @@
         <a class="nav-link {{ request()->routeIs('purchase-orders.*') ? 'active' : '' }}" href="{{ route('purchase-orders.index') }}"><span class="nav-icon">▧</span><span class="nav-text">Purchase orders</span></a>
         <a class="nav-link {{ request()->routeIs('categories.*') ? 'active' : '' }}" href="{{ route('categories.index') }}"><span class="nav-icon">▧</span><span class="nav-text">Categories</span></a>
         <a class="nav-link {{ request()->routeIs('activity-logs.*') ? 'active' : '' }}" href="{{ route('activity-logs.index') }}"><span class="nav-icon">≋</span><span class="nav-text">Activity logs</span></a>
-        @if(auth()->user()->role === 'admin')
+        @if(optional(auth()->user())->role === 'admin')
         <details class="nav-group" @if(request()->routeIs('reports.*', 'expired-stock.*')) open @endif>
             <summary class="nav-link"><span class="nav-icon">&#9638;</span><span class="nav-text">Inventory Reports</span></summary>
             <div class="nav-submenu">
@@ -125,7 +125,7 @@
             </div>
         </details>
         @endif
-        @if(auth()->user()->role === 'admin')
+        @if(optional(auth()->user())->role === 'admin')
         <details class="nav-group" @if(request()->routeIs('permissions.*', 'users.*')) open @endif>
             <summary class="nav-link"><span class="nav-icon">&#9881;</span><span class="nav-text">Access Control</span></summary>
             <div class="nav-submenu">
@@ -134,17 +134,18 @@
             </div>
         </details>
         @endif
-        @if(auth()->user()->role === 'admin')<a class="nav-link {{ request()->routeIs('suppliers.*') ? 'active' : '' }}" href="{{ route('suppliers.index') }}"><span class="nav-icon">◫</span><span class="nav-text">Suppliers</span></a>
+        @if(optional(auth()->user())->role === 'admin')<a class="nav-link {{ request()->routeIs('suppliers.*') ? 'active' : '' }}" href="{{ route('suppliers.index') }}"><span class="nav-icon">◫</span><span class="nav-text">Suppliers</span></a>
         <a class="nav-link {{ request()->routeIs('reports.*') ? 'active' : '' }}" href="{{ route('reports.index') }}"><span class="nav-icon">▥</span><span class="nav-text">Reports</span></a>
         <a class="nav-link {{ request()->routeIs('expired-stock.*') ? 'active' : '' }}" href="{{ route('expired-stock.index') }}"><span class="nav-icon">!</span><span class="nav-text">Expired stock</span></a>
         <a class="nav-link {{ request()->routeIs('permission-requests.*') && !request()->routeIs('permission-requests.mine') ? 'active' : '' }}" href="{{ route('permission-requests.index') }}"><span class="nav-icon">◇</span><span class="nav-text">Access requests</span></a>@endif
-        @if(auth()->user()->role === 'admin')<a class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}" href="{{ route('users.index') }}"><span class="nav-icon">♙</span><span class="nav-text">Users & access</span></a>@endif
+        @if(optional(auth()->user())->role === 'admin')<a class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}" href="{{ route('users.index') }}"><span class="nav-icon">♙</span><span class="nav-text">Users & access</span></a>@endif
         <a class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}" href="{{ route('profile.edit') }}"><span class="nav-icon">◎</span><span class="nav-text">Profile</span></a>
     </aside>
     <main class="main">
-        <header class="topbar"><span class="crumb">Operations / @yield('section', 'Overview')</span><div class="profile"><span class="avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span><span>{{ auth()->user()->name }} · {{ ucfirst(auth()->user()->role) }}</span><form method="post" action="{{ route('logout') }}">@csrf<button class="btn" type="submit" title="Sign out">↪</button></form></div></header>
+        <header class="topbar"><span class="crumb">Operations / @yield('section', 'Overview')</span><div class="profile">@auth <span class="avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span><span>{{ auth()->user()->name }} · {{ ucfirst(auth()->user()->role) }}</span><form method="post" action="{{ route('logout') }}">@csrf<button class="btn" type="submit" title="Sign out">↪</button></form>@else<a class="btn" href="{{ route('login') }}">Sign in</a>@endauth</div></header>
         <div class="content">@if(session('status'))<div class="flash">{{ session('status') }}</div>@endif @yield('content')</div>
     </main>
 </div>
 </body>
 </html>
+

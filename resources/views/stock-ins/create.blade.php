@@ -12,6 +12,48 @@
 <div class="panel-head" style="padding:15px 0"><h2>Received products</h2><button class="btn" type="button" onclick="addLine()">＋ Add line</button></div>
 <div id="items">@php($lines = old('items', [[]])) @foreach($lines as $i => $line)<div class="form-grid item-line" style="border-bottom:1px solid #edf0f1;padding:4px 0 10px"><div class="field"><label>Product*</label><select name="items[{{ $i }}][product_id]" required><option value="">Select product</option>@foreach($products as $product)<option value="{{ $product->id }}" @selected(($line['product_id'] ?? '') == $product->id)>{{ $product->sku }} · {{ $product->name }}</option>@endforeach</select></div><div class="field"><label>Batch number*</label><input name="items[{{ $i }}][batch_number]" required value="{{ $line['batch_number'] ?? '' }}"></div><div class="field"><label>Package quantity*</label><input type="number" min="1" name="items[{{ $i }}][quantity]" required value="{{ $line['quantity'] ?? '' }}"></div><div class="field"><label>Unit cost (PHP)*</label><input type="number" step="0.01" min="0" name="items[{{ $i }}][unit_cost]" required value="{{ $line['unit_cost'] ?? '' }}"></div><div class="field"><label>Expiration date</label><input type="date" name="items[{{ $i }}][expires_at]" value="{{ $line['expires_at'] ?? '' }}"></div></div>@endforeach</div>
 @error('items')<span class="errors">{{ $message }}</span>@enderror<div style="display:flex;justify-content:flex-end;gap:9px;margin-top:16px"><a class="btn" href="{{ route('stock-ins.index') }}">Cancel</a><button class="btn primary">Save pending stock-in</button></div></form></div></section>
+<script>
+function generateCode(prefix){
+    const date = new Date();
+    const stamp = [date.getFullYear(), String(date.getMonth()+1).padStart(2, '0'), String(date.getDate()).padStart(2, '0')].join('');
+    const time = [String(date.getHours()).padStart(2, '0'), String(date.getMinutes()).padStart(2, '0'), String(date.getSeconds()).padStart(2, '0')].join('');
+    const suffix = Math.random().toString(36).slice(2, 6).toUpperCase();
+    return `${prefix}-${stamp}-${time}-${suffix}`;
+}
+
+function generateStockInReference(){ return generateCode('SI'); }
+function generateBatchNumber(){ return generateCode('BATCH'); }
+
+document.addEventListener('DOMContentLoaded', function () {
+    const refInput = document.getElementById('reference_number');
+    if (refInput && refInput.value.trim() === '') {
+        refInput.value = generateStockInReference();
+    }
+
+    document.querySelectorAll('.item-line').forEach((row) => {
+        const batchInput = row.querySelector('input[name$="[batch_number]"]');
+        if (batchInput && batchInput.value.trim() === '') {
+            batchInput.value = generateBatchNumber();
+        }
+    });
+});
+</script>
 <script>const supplierSelect=document.getElementById('supplier_id');const poSelect=document.getElementById('purchase_order_id');function syncSupplierFromPo(){const option=poSelect.options[poSelect.selectedIndex];if(option?.dataset.supplier)supplierSelect.value=option.dataset.supplier}poSelect.addEventListener('change',syncSupplierFromPo);syncSupplierFromPo();</script>
-<script>function addLine(){const root=document.getElementById('items');const i=root.querySelectorAll('.item-line').length;const first=root.querySelector('.item-line');const copy=first.cloneNode(true);copy.querySelectorAll('input').forEach(el=>el.value='');copy.querySelectorAll('select').forEach(el=>el.selectedIndex=0);copy.querySelectorAll('[name]').forEach(el=>el.name=el.name.replace(/items\[\d+\]/,`items[${i}]`));root.appendChild(copy)}</script>
+<script>
+function addLine(){
+    const root=document.getElementById('items');
+    const i=root.querySelectorAll('.item-line').length;
+    const first=root.querySelector('.item-line');
+    const copy=first.cloneNode(true);
+    copy.querySelectorAll('input').forEach(el => {
+        el.value = '';
+        if (el.name.endsWith('[batch_number]')) {
+            el.value = generateBatchNumber();
+        }
+    });
+    copy.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+    copy.querySelectorAll('[name]').forEach(el => el.name = el.name.replace(/items\[\d+\]/, `items[${i}]`));
+    root.appendChild(copy);
+}
+</script>
 @endsection

@@ -29,9 +29,9 @@ php artisan migrate --seed
 php artisan serve
 ```
 
-Open `http://127.0.0.1:8000` after starting the local server. The seed data includes an administrator account:
+Open `http://127.0.0.1:8000` after starting the local server. The seed data includes a single administrator account:
 
-- Email: `admin@medcare.local`
-- Password: `password`
+- Email: `admin@gmail.com`
+- Password: `admin123`
 
-Change the seeded password before using this app outside a local development environment. Sample products and supplier are demo records.
+Sample products and supplier are demo records.

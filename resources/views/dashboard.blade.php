@@ -49,7 +49,7 @@
     .workflow-panel{margin-top:16px}
     @media(max-width:560px){.value-content{padding:12px}.value-number{font-size:19px}}
 </style>
-<div class="welcome-row"><div><div class="eyebrow">Davao Medcare · Operations</div><h1>Welcome back, {{ auth()->user()->name }}</h1><div class="welcome-copy">Here is your inventory position for today.</div></div><div class="welcome-actions"><div class="today-chip">{{ now()->format('l, F j, Y') }}</div></div></div>
+<div class="welcome-row"><div><div class="eyebrow">Davao Medcare · Operations</div><h1>Welcome back, {{ $user?->name ?? 'there' }}</h1><div class="welcome-copy">Here is your inventory position for today.</div></div><div class="welcome-actions"><div class="today-chip">{{ now()->format('l, F j, Y') }}</div></div></div>
 <div class="inventory-stats">
     <a class="inventory-stat" href="{{ route('products.index') }}" style="--accent:#177c78;--soft:#e5f2f0"><div class="inventory-stat-top">Total products <span class="inventory-stat-icon">▤</span></div><div class="inventory-stat-value">{{ number_format($productCount) }}</div><div class="inventory-stat-note">View product catalog</div></a>
     <a class="inventory-stat" href="{{ route('products.index', ['stock_status' => 'in-stock']) }}" style="--accent:#25846e;--soft:#e6f3ed"><div class="inventory-stat-top">In stock <span class="inventory-stat-icon">✓</span></div><div class="inventory-stat-value" style="color:#25846e">{{ number_format($inStockCount) }}</div><div class="inventory-stat-note">Above minimum quantity</div></a>
@@ -68,7 +68,7 @@
         <section class="metric-card metric-card--value"><div class="metric-card__label">Total inventory value</div><div class="metric-card__value">₱{{ number_format($inventoryValue, 2) }}</div><div class="metric-card__sub">At selling price</div><span class="metric-card__icon" aria-hidden="true">₱</span></section>
         <section class="metric-card metric-card--lots"><div class="metric-card__label">Active stock lots</div><div class="metric-card__value">{{ number_format($activeLots) }}</div><div class="metric-card__sub">Available batches</div><span class="metric-card__icon" aria-hidden="true">▣</span></section>
         <section class="metric-card metric-card--expiry"><div class="metric-card__label">Expiring in 30 days</div><div class="metric-card__value">{{ number_format($expiring30DayCount) }}</div><div class="metric-card__sub">Batches to review</div><span class="metric-card__icon" aria-hidden="true">!</span></section>
-        <a class="metric-card metric-card--adjustments" href="{{ route('adjustments.index') }}"><div class="metric-card__label">Pending adjustments</div><div class="metric-card__value">{{ number_format($pendingAdjustments) }}</div><div class="metric-card__sub">{{ auth()->user()->role === 'admin' ? 'Awaiting review' : 'Your requests' }}</div><span class="metric-card__icon" aria-hidden="true">↗</span></a>
+        <a class="metric-card metric-card--adjustments" href="{{ route('adjustments.index') }}"><div class="metric-card__label">Pending adjustments</div><div class="metric-card__value">{{ number_format($pendingAdjustments) }}</div><div class="metric-card__sub">{{ $user?->role === 'admin' ? 'Awaiting review' : 'Your requests' }}</div><span class="metric-card__icon" aria-hidden="true">↗</span></a>
     </div>
 </div>
 @endsection

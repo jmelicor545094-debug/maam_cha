@@ -25,6 +25,21 @@ class StockInController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        $referenceNumber = trim((string) $request->input('reference_number', ''));
+        if ($referenceNumber === '') {
+            $referenceNumber = 'SI-'.now()->format('YmdHis').'-'.strtoupper(substr(bin2hex(random_bytes(2)), 0, 4));
+        }
+        $request->merge(['reference_number' => $referenceNumber]);
+
+        $items = $request->input('items', []);
+        foreach ($items as $index => $item) {
+            $batchNumber = trim((string) ($item['batch_number'] ?? ''));
+            if ($batchNumber === '') {
+                $items[$index]['batch_number'] = 'BATCH-'.now()->format('YmdHis').'-'.strtoupper(substr(bin2hex(random_bytes(2)), 0, 4));
+            }
+        }
+        $request->merge(['items' => $items]);
+
         $data = $request->validate([
             'reference_number' => ['required','string','max:80','unique:stock_ins,reference_number'],
             'supplier_id' => ['required', Rule::exists('suppliers','id')->whereNull('deleted_at')], 'purchase_order_id' => ['nullable','exists:purchase_orders,id'], 'received_at' => ['required','date'], 'notes' => ['nullable','string','max:1000'],

@@ -24,8 +24,9 @@ Route::middleware('guest')->group(function () {
 });
 Route::post('/logout', [AuthController::class, 'destroy'])->middleware('auth')->name('logout');
 
+Route::get('/', DashboardController::class)->name('dashboard');
+
 Route::middleware('auth')->group(function () {
-    Route::get('/', DashboardController::class)->name('dashboard');
     Route::get('products/generate-sku', [ProductController::class, 'generateSku'])->name('products.generate-sku');
     Route::resource('products', ProductController::class)->except(['show', 'destroy']);
     Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');
