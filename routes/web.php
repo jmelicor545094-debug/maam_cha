@@ -24,7 +24,15 @@ Route::middleware('guest')->group(function () {
 });
 Route::post('/logout', [AuthController::class, 'destroy'])->middleware('auth')->name('logout');
 
-Route::get('/', DashboardController::class)->name('dashboard');
+Route::get('/', function () {
+    if (auth()->check()) {
+        return redirect()->route('dashboard');
+    }
+
+    return redirect()->route('login');
+});
+
+Route::get('/dashboard', DashboardController::class)->middleware('auth')->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('products/generate-sku', [ProductController::class, 'generateSku'])->name('products.generate-sku');

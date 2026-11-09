@@ -6,7 +6,7 @@ use App\Models\ActivityLog;
 use App\Models\Permission;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Rule;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class PermissionController extends Controller

@@ -17,10 +17,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::where('email', '!=', 'admin@gmail.com')->delete();
+        User::whereNotIn('email', ['admin@gmail.com', 'staff@gmail.com'])->delete();
+
         User::updateOrCreate(
             ['email' => 'admin@gmail.com'],
             ['name' => 'Medcare Administrator', 'password' => Hash::make('admin123'), 'role' => 'admin']
+        );
+
+        User::updateOrCreate(
+            ['email' => 'staff@gmail.com'],
+            ['name' => 'Medcare Staff', 'password' => Hash::make('staff123'), 'role' => 'staff']
         );
 
         foreach ([

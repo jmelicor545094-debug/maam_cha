@@ -29,9 +29,9 @@ php artisan migrate --seed
 php artisan serve
 ```
 
-Open `http://127.0.0.1:8000` after starting the local server. The seed data includes a single administrator account:
+Open `http://127.0.0.1:8000` after starting the local server. The seed data includes demo accounts for both admin and staff roles:
 
-- Email: `admin@gmail.com`
-- Password: `admin123`
+- Admin: `admin@gmail.com` / `admin123`
+- Staff: `staff@gmail.com` / `staff123`
 
 Sample products and supplier are demo records.

@@ -4,71 +4,288 @@
 @section('content')
 @php
     $chartTotal = max($productCount, 1);
-    $inEnd = round($inStockCount / $chartTotal * 360, 2);
+    $inEnd  = round($inStockCount / $chartTotal * 360, 2);
     $lowEnd = round(($inStockCount + $lowStockCount) / $chartTotal * 360, 2);
-    $inPercent = round($inStockCount / $chartTotal * 100);
+    $inPercent  = round($inStockCount  / $chartTotal * 100);
     $lowPercent = round($lowStockCount / $chartTotal * 100);
     $outPercent = round($outOfStockCount / $chartTotal * 100);
 @endphp
 <style>
-    .welcome-row{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:22px}.welcome-row h1{margin:5px 0 3px;font-size:25px}.welcome-copy{font-size:13px;color:#71848b}.today-chip{font-size:11px;color:#52737b;background:#e9f1ef;border:1px solid #dce9e5;padding:8px 11px;border-radius:4px;white-space:nowrap}.welcome-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}
-    .inventory-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-bottom:18px}.inventory-stat{position:relative;display:block;overflow:hidden;background:#fff;border:1px solid #e1e8e9;border-radius:6px;padding:16px 17px 15px;min-height:116px;color:inherit;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}.inventory-stat:before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:var(--accent)}.inventory-stat:hover{transform:translateY(-2px);border-color:var(--accent);box-shadow:0 7px 18px #173b4212}.inventory-stat:focus-visible{outline:3px solid #16796b40;outline-offset:2px}.inventory-stat-top{display:flex;align-items:center;justify-content:space-between;color:#647a82;font-size:11px}.inventory-stat-icon{display:grid;place-items:center;width:30px;height:30px;border-radius:6px;background:var(--soft);color:var(--accent);font-size:15px}.inventory-stat-value{font-size:27px;font-weight:700;line-height:1;margin-top:12px;color:#1d3440}.inventory-stat-note{margin-top:6px;font-size:10px;color:#8a999e}
-    .dashboard-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(300px,.75fr);gap:15px}.dash-panel{background:#fff;border:1px solid #e1e8e9;border-radius:6px;overflow:hidden}.dash-panel-head{display:flex;justify-content:space-between;align-items:center;padding:15px 17px;border-bottom:1px solid #e8edee}.dash-panel-head h2{font-size:14px;margin:0}.dash-panel-head span{font-size:11px;color:#829399}.status-body{display:grid;grid-template-columns:minmax(190px,.85fr) minmax(180px,1fr);align-items:center;gap:14px;padding:24px 22px}.donut-wrap{display:grid;place-items:center;position:relative;min-height:205px}.donut{width:184px;aspect-ratio:1;border-radius:50%;background:conic-gradient(#25846e 0deg {{ $inEnd }}deg,#e2a32b {{ $inEnd }}deg {{ $lowEnd }}deg,#d95750 {{ $lowEnd }}deg 360deg);position:relative}.donut:after{content:"";position:absolute;inset:24px;background:#fff;border-radius:50%}.donut-center{position:absolute;z-index:1;text-align:center}.donut-center strong{display:block;font-size:29px;line-height:1.1}.donut-center span{color:#819197;font-size:10px}.legend{display:grid;gap:13px}.legend-row{display:grid;grid-template-columns:10px 1fr auto;gap:9px;align-items:center;font-size:12px;color:#536b73}.legend-dot{width:9px;height:9px;border-radius:50%;background:var(--dot)}.legend-row strong{color:#213943}.legend-hint{font-size:10px;color:#8a999e;margin-top:3px}
-    .side-stack{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-content:start}.value-panel{grid-column:auto;background:#fff;color:#20343b;border:1px solid #e1e8e9;min-height:112px}.value-panel .dash-panel-head{border-color:#e8edee}.value-panel .dash-panel-head h2{color:#2a4148}.value-content{padding:13px 15px;display:block}.value-caption{font-size:10px;color:#748990}.value-number{font-size:21px;font-weight:700;margin-top:6px;white-space:nowrap;color:#1d3440}.value-divider{border:0;padding:0;margin-top:7px}.value-divider .value-number{font-size:11px;font-weight:600;margin-top:2px;color:#6f8589}.mini-panel{min-height:112px;padding:15px 16px}.mini-panel-label{font-size:10px;color:#748990;text-transform:uppercase}.mini-panel-value{font-size:25px;font-weight:700;margin-top:13px;color:#1c4852}.mini-panel-sub{font-size:10px;color:#87989d;margin-top:4px}.metric-link{display:block;transition:transform .16s ease,box-shadow .16s ease}.metric-link:hover{transform:translateY(-2px);box-shadow:0 6px 18px #173b4212}.status-progress{height:5px;margin-top:8px;overflow:hidden;border-radius:4px;background:#eef2f2}.status-progress span{display:block;height:100%;width:var(--progress);background:var(--dot);border-radius:4px}.legend-item{padding:3px 0}.legend{gap:12px}
-    .workflow-panel{margin-bottom:16px;background:#fff;border:1px solid #e1e8e9;border-radius:6px;overflow:hidden}.workflow-panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 17px;border-bottom:1px solid #e8edee}.workflow-panel-head h2{font-size:14px;margin:0}.workflow-panel-head span{font-size:11px;color:#829399}.workflow-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}.workflow-link{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 17px;border-right:1px solid #edf0f1;color:#304b52}.workflow-link:last-child{border-right:0}.workflow-link:hover{background:#f7faf9}.workflow-name{font-size:12px;font-weight:600}.workflow-hint{font-size:10px;color:#829399;margin-top:4px}.workflow-count{display:grid;place-items:center;min-width:30px;height:30px;padding:0 8px;border-radius:5px;background:#eef4f2;color:#267a63;font-size:13px;font-weight:700}.workflow-count.attention{background:#fff1dc;color:#a76b0a}
-    @media(max-width:980px){.inventory-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.dashboard-grid{grid-template-columns:1fr}.side-stack{grid-template-columns:1fr 1fr}.expiry-panel{grid-column:1/-1}}@media(max-width:700px){.workflow-grid{grid-template-columns:1fr}.workflow-link{border-right:0;border-bottom:1px solid #edf0f1}.workflow-link:last-child{border-bottom:0}}@media(max-width:560px){.content{padding:18px 12px}.welcome-row{align-items:flex-start;flex-direction:column;gap:10px}.welcome-actions{justify-content:flex-start;width:100%}.inventory-stats{gap:8px}.inventory-stat{padding:13px;min-height:105px}.inventory-stat-value{font-size:24px}.status-body{grid-template-columns:1fr;padding:15px}.donut-wrap{min-height:185px}.donut{width:160px}.legend{grid-template-columns:1fr 1fr}.side-stack{gap:8px}.mini-panel{padding:12px}.mini-panel-value{font-size:21px}.value-content{padding:13px}.value-number{font-size:19px}}
+/* ── Welcome banner ───────────────────────────────────────── */
+.db-welcome{
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    background:linear-gradient(135deg,#0d4a4c 0%,#116b62 55%,#1a8870 100%);
+    border-radius:14px;padding:26px 28px;margin-bottom:22px;
+    box-shadow:0 4px 20px #0d4a4c28;
+}
+.db-welcome-text .db-eyebrow{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#a3d9c8;margin-bottom:6px}
+.db-welcome-text h1{margin:0 0 5px;font-size:22px;font-weight:800;color:#fff;line-height:1.2}
+.db-welcome-text p{margin:0;font-size:12px;color:#b8ddd5}
+.db-date-chip{flex-shrink:0;background:#ffffff18;border:1px solid #ffffff28;color:#d8f0ea;
+    font-size:11px;font-weight:600;padding:8px 14px;border-radius:8px;white-space:nowrap;backdrop-filter:blur(4px)}
+
+/* ── 4 KPI cards ──────────────────────────────────────────── */
+.db-kpi-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}
+.db-kpi{
+    position:relative;display:block;overflow:hidden;
+    background:#fff;border:1px solid #e3eaeb;border-radius:12px;
+    padding:18px 18px 16px;color:inherit;
+    transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
+    box-shadow:0 1px 4px #173b420a;
+}
+.db-kpi:hover{transform:translateY(-3px);box-shadow:0 8px 22px #173b4214;border-color:var(--kpi-accent)}
+.db-kpi-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.db-kpi-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6c7e84}
+.db-kpi-icon{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;
+    background:var(--kpi-soft);color:var(--kpi-accent);font-size:14px;font-weight:700}
+.db-kpi-value{font-size:30px;font-weight:800;line-height:1;color:var(--kpi-accent);letter-spacing:-0.03em}
+.db-kpi-note{margin-top:6px;font-size:10px;color:#8a999e}
+.db-kpi-bar{position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--kpi-accent);opacity:.25;border-radius:0 0 12px 12px}
+
+/* ── Main 2-col grid ──────────────────────────────────────── */
+.db-main{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(280px,.7fr);gap:16px;margin-bottom:18px}
+
+/* ── Donut panel ──────────────────────────────────────────── */
+.db-panel{background:#fff;border:1px solid #e3eaeb;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px #173b420a}
+.db-panel-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #edf1f2}
+.db-panel-head h2{margin:0;font-size:14px;font-weight:700;color:#1f3138}
+.db-panel-head span{font-size:11px;color:#829399}
+.db-donut-body{display:grid;grid-template-columns:minmax(170px,.8fr) 1fr;align-items:center;gap:0;padding:24px 20px}
+.db-donut-wrap{display:grid;place-items:center;position:relative;min-height:190px}
+.db-donut{width:170px;aspect-ratio:1;border-radius:50%;position:relative;
+    background:{{ $productCount
+        ? 'conic-gradient(#25846e 0deg '.$inEnd.'deg,#e2a32b '.$inEnd.'deg '.$lowEnd.'deg,#d95750 '.$lowEnd.'deg 360deg)'
+        : '#e8eeee' }};
+}
+.db-donut::after{content:"";position:absolute;inset:26px;background:#fff;border-radius:50%}
+.db-donut-center{position:absolute;z-index:1;text-align:center}
+.db-donut-center strong{display:block;font-size:28px;font-weight:800;line-height:1.1;color:#1f3138}
+.db-donut-center span{font-size:10px;color:#829399}
+.db-legend{display:grid;gap:14px;padding-left:8px}
+.db-legend-item{}
+.db-legend-row{display:grid;grid-template-columns:8px 1fr auto;gap:9px;align-items:center;font-size:12px;color:#536b73}
+.db-legend-dot{width:8px;height:8px;border-radius:50%;background:var(--dot)}
+.db-legend-row strong{font-size:13px;font-weight:700;color:#1f3138}
+.db-legend-sub{font-size:10px;color:#8a999e;margin:3px 0 5px 17px}
+.db-legend-bar{height:4px;border-radius:4px;background:#eef2f2;overflow:hidden;margin-left:17px}
+.db-legend-bar span{display:block;height:100%;width:var(--w);background:var(--dot);border-radius:4px}
+
+/* ── Right metric stack ───────────────────────────────────── */
+.db-metric-stack{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-content:start}
+.db-metric{
+    position:relative;overflow:hidden;border-radius:12px;
+    padding:18px 16px 16px;color:#fff;min-height:120px;
+    box-shadow:0 2px 10px #0003;
+}
+.db-metric a{color:#fff}
+.db-metric-label{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:#ffffffcc;max-width:calc(100% - 42px);line-height:1.4}
+.db-metric-value{margin-top:10px;font-size:22px;font-weight:800;line-height:1.1;color:#fff;
+    padding-right:44px;word-break:break-word}
+.db-metric-value.sm{font-size:16px}
+.db-metric-sub{margin-top:5px;font-size:9px;color:#ffffffaa}
+.db-metric-icon{position:absolute;right:12px;top:50%;transform:translateY(-50%);
+    width:34px;height:34px;border-radius:50%;background:#ffffff20;
+    display:grid;place-items:center;font-size:14px;font-weight:700;color:#fff}
+.db-metric--teal{background:linear-gradient(135deg,#075c59,#0a7a70)}
+.db-metric--blue{background:linear-gradient(135deg,#0a6fa0,#0d8ec8)}
+.db-metric--red{background:linear-gradient(135deg,#c43232,#e04545)}
+.db-metric--amber{background:linear-gradient(135deg,#b87008,#da8f10)}
+.db-metric-link{display:block;transition:transform .18s,filter .18s}
+.db-metric-link:hover{transform:translateY(-3px);filter:brightness(.93)}
+
+/* ── Quick actions bar ────────────────────────────────────── */
+.db-actions{background:#fff;border:1px solid #e3eaeb;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px #173b420a}
+.db-actions-head{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid #edf1f2}
+.db-actions-head h2{margin:0;font-size:13px;font-weight:700;color:#1f3138}
+.db-actions-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}
+.db-action-link{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+    padding:16px 10px;border-right:1px solid #edf1f2;color:#304b52;
+    transition:background .15s,color .15s;text-align:center}
+.db-action-link:last-child{border-right:0}
+.db-action-link:hover{background:#f4f8f7;color:#0d6a62}
+.db-action-icon{width:36px;height:36px;border-radius:9px;background:#edf4f2;color:#177c78;
+    display:grid;place-items:center;font-size:16px;transition:background .15s}
+.db-action-link:hover .db-action-icon{background:#d5ede8}
+.db-action-name{font-size:11px;font-weight:600}
+.db-action-hint{font-size:9px;color:#8a9ea5}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media(max-width:980px){
+    .db-kpi-row{grid-template-columns:repeat(2,1fr)}
+    .db-main{grid-template-columns:1fr}
+    .db-actions-grid{grid-template-columns:repeat(3,1fr)}
+    .db-action-link:nth-child(3){border-right:0}
+    .db-action-link:nth-child(4){border-top:1px solid #edf1f2}
+    .db-action-link:nth-child(5){border-top:1px solid #edf1f2;border-right:0}
+}
+@media(max-width:600px){
+    .db-welcome{flex-direction:column;align-items:flex-start;padding:18px}
+    .db-kpi-row{grid-template-columns:1fr 1fr;gap:8px}
+    .db-donut-body{grid-template-columns:1fr;padding:16px}
+    .db-donut-wrap{min-height:170px}
+    .db-donut{width:150px}
+    .db-metric-stack{grid-template-columns:1fr 1fr;gap:8px}
+    .db-actions-grid{grid-template-columns:repeat(2,1fr)}
+    .db-action-link:nth-child(2n){border-right:0}
+    .db-action-link{border-top:1px solid #edf1f2}
+    .db-action-link:nth-child(1),.db-action-link:nth-child(2){border-top:0}
+}
 </style>
-<style>
-    .metric-card{position:relative;display:block;overflow:hidden;min-height:112px;padding:17px 15px;border:0;border-radius:7px;color:#fff}
-    .metric-card__label{max-width:calc(100% - 46px);font-size:9px;font-weight:700;line-height:1.35;text-transform:uppercase;color:#ffffffc9}
-    .metric-card__value{margin-top:9px;font-size:23px;line-height:1;font-weight:700;color:#fff}
-    .metric-card__sub{margin-top:6px;font-size:9px;color:#ffffffb8}
-    .metric-card__icon{position:absolute;right:13px;top:50%;display:grid;place-items:center;width:34px;height:34px;transform:translateY(-50%);border-radius:50%;background:#ffffff26;color:#fff;font-size:14px;font-weight:700}
-    .metric-card--value{background:#075c59}
-    .metric-card--lots{background:#087fb2}
-    .metric-card--expiry{background:#d83d3b}
-    .metric-card--adjustments{background:#df8b08}
-    a.metric-card{transition:transform .16s ease,filter .16s ease}
-    a.metric-card:hover{transform:translateY(-2px);filter:brightness(.96)}
-    a.metric-card:focus-visible{outline:3px solid #16796b60;outline-offset:2px}
-    .inventory-stat{min-height:100px;padding:14px 16px;border-radius:7px}
-    .inventory-stat:before{display:none}
-    .inventory-stat-top{justify-content:flex-start;font-size:9px;font-weight:700;text-transform:uppercase;color:#6c7e83}
-    .inventory-stat-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;font-size:14px}
-    .inventory-stat-value{margin-top:8px;font-size:23px}
-    .inventory-stat-note{display:none}
-    .value-panel{grid-column:auto;min-height:112px}
-    .value-content{display:block;padding:13px 15px}
-    .value-caption{font-size:10px}
-    .value-number{font-size:21px;margin-top:6px;white-space:nowrap}
-    .value-divider{border:0;padding:0;margin-top:7px}
-    .value-divider .value-number{font-size:11px;font-weight:600;margin-top:2px;color:#6f8589}
-    .mini-panel{min-height:112px}
-    .metric-link{display:block;transition:transform .16s ease,box-shadow .16s ease}
-    .metric-link:hover{transform:translateY(-2px);box-shadow:0 6px 18px #173b4212}
-    .workflow-panel{margin-top:16px}
-    @media(max-width:560px){.value-content{padding:12px}.value-number{font-size:19px}}
-</style>
-<div class="welcome-row"><div><div class="eyebrow">Davao Medcare · Operations</div><h1>Welcome back, {{ $user?->name ?? 'there' }}</h1><div class="welcome-copy">Here is your inventory position for today.</div></div><div class="welcome-actions"><div class="today-chip">{{ now()->format('l, F j, Y') }}</div></div></div>
-<div class="inventory-stats">
-    <a class="inventory-stat" href="{{ route('products.index') }}" style="--accent:#177c78;--soft:#e5f2f0"><div class="inventory-stat-top">Total products <span class="inventory-stat-icon">▤</span></div><div class="inventory-stat-value">{{ number_format($productCount) }}</div><div class="inventory-stat-note">View product catalog</div></a>
-    <a class="inventory-stat" href="{{ route('products.index', ['stock_status' => 'in-stock']) }}" style="--accent:#25846e;--soft:#e6f3ed"><div class="inventory-stat-top">In stock <span class="inventory-stat-icon">✓</span></div><div class="inventory-stat-value" style="color:#25846e">{{ number_format($inStockCount) }}</div><div class="inventory-stat-note">Above minimum quantity</div></a>
-    <a class="inventory-stat" href="{{ route('products.index', ['stock_status' => 'low-stock']) }}" style="--accent:#d4931e;--soft:#fff3df"><div class="inventory-stat-top">Low stock <span class="inventory-stat-icon">!</span></div><div class="inventory-stat-value" style="color:#c38617">{{ number_format($lowStockCount) }}</div><div class="inventory-stat-note">At or below reorder level</div></a>
-    <a class="inventory-stat" href="{{ route('products.index', ['stock_status' => 'out-of-stock']) }}" style="--accent:#d95750;--soft:#fbe9e7"><div class="inventory-stat-top">Out of stock <span class="inventory-stat-icon">×</span></div><div class="inventory-stat-value" style="color:#cc4e49">{{ number_format($outOfStockCount) }}</div><div class="inventory-stat-note">View unavailable products</div></a>
-</div>
-<div class="dashboard-grid">
-    <div>
-        <section class="dash-panel"><div class="dash-panel-head"><h2>Inventory status</h2><span>Product count by stock level</span></div><div class="status-body"><div class="donut-wrap"><div class="donut" role="img" aria-label="{{ $inStockCount }} in stock, {{ $lowStockCount }} low stock, {{ $outOfStockCount }} out of stock" style="background:{{ $productCount ? 'conic-gradient(#25846e 0deg '.$inEnd.'deg,#e2a32b '.$inEnd.'deg '.$lowEnd.'deg,#d95750 '.$lowEnd.'deg 360deg)' : '#e8eeee' }}"></div><div class="donut-center"><strong>{{ number_format($productCount) }}</strong><span>products</span></div></div><div class="legend">
-            <div class="legend-item"><div class="legend-row"><span class="legend-dot" style="--dot:#25846e"></span><span>In stock</span><strong>{{ $inStockCount }}</strong></div><div class="legend-hint">{{ $inPercent }}% of catalog</div><div class="status-progress" style="--dot:#25846e;--progress:{{ $inPercent }}%"><span></span></div></div>
-            <div class="legend-item"><div class="legend-row"><span class="legend-dot" style="--dot:#e2a32b"></span><span>Low stock</span><strong>{{ $lowStockCount }}</strong></div><div class="legend-hint">{{ $lowPercent }}% of catalog</div><div class="status-progress" style="--dot:#e2a32b;--progress:{{ $lowPercent }}%"><span></span></div></div>
-            <div class="legend-item"><div class="legend-row"><span class="legend-dot" style="--dot:#d95750"></span><span>Out of stock</span><strong>{{ $outOfStockCount }}</strong></div><div class="legend-hint">{{ $outPercent }}% of catalog</div><div class="status-progress" style="--dot:#d95750;--progress:{{ $outPercent }}%"><span></span></div></div>
-        </div></div></section>
+
+{{-- ── Welcome Banner ── --}}
+<div class="db-welcome">
+    <div class="db-welcome-text">
+        <div class="db-eyebrow">Davao Medcare · Operations</div>
+        <h1>Welcome back, {{ $user?->name ?? 'there' }} 👋</h1>
+        <p>Here is your inventory position for today.</p>
     </div>
-    <div class="side-stack">
-        <section class="metric-card metric-card--value"><div class="metric-card__label">Total inventory value</div><div class="metric-card__value">₱{{ number_format($inventoryValue, 2) }}</div><div class="metric-card__sub">At selling price</div><span class="metric-card__icon" aria-hidden="true">₱</span></section>
-        <section class="metric-card metric-card--lots"><div class="metric-card__label">Active stock lots</div><div class="metric-card__value">{{ number_format($activeLots) }}</div><div class="metric-card__sub">Available batches</div><span class="metric-card__icon" aria-hidden="true">▣</span></section>
-        <section class="metric-card metric-card--expiry"><div class="metric-card__label">Expiring in 30 days</div><div class="metric-card__value">{{ number_format($expiring30DayCount) }}</div><div class="metric-card__sub">Batches to review</div><span class="metric-card__icon" aria-hidden="true">!</span></section>
-        <a class="metric-card metric-card--adjustments" href="{{ route('adjustments.index') }}"><div class="metric-card__label">Pending adjustments</div><div class="metric-card__value">{{ number_format($pendingAdjustments) }}</div><div class="metric-card__sub">{{ $user?->role === 'admin' ? 'Awaiting review' : 'Your requests' }}</div><span class="metric-card__icon" aria-hidden="true">↗</span></a>
+    <div class="db-date-chip">{{ now()->format('l, F j, Y') }}</div>
+</div>
+
+{{-- ── KPI Row ── --}}
+<div class="db-kpi-row">
+    <a class="db-kpi" href="{{ route('products.index') }}" style="--kpi-accent:#177c78;--kpi-soft:#e5f2f0">
+        <div class="db-kpi-top">
+            <span class="db-kpi-label">Total Products</span>
+            <span class="db-kpi-icon">▤</span>
+        </div>
+        <div class="db-kpi-value">{{ number_format($productCount) }}</div>
+        <div class="db-kpi-note">Active in catalog</div>
+        <div class="db-kpi-bar"></div>
+    </a>
+    <a class="db-kpi" href="{{ route('products.index', ['stock_status' => 'in-stock']) }}" style="--kpi-accent:#25846e;--kpi-soft:#e6f3ed">
+        <div class="db-kpi-top">
+            <span class="db-kpi-label">In Stock</span>
+            <span class="db-kpi-icon">✓</span>
+        </div>
+        <div class="db-kpi-value">{{ number_format($inStockCount) }}</div>
+        <div class="db-kpi-note">Above reorder level</div>
+        <div class="db-kpi-bar"></div>
+    </a>
+    <a class="db-kpi" href="{{ route('products.index', ['stock_status' => 'low-stock']) }}" style="--kpi-accent:#c47d10;--kpi-soft:#fff3df">
+        <div class="db-kpi-top">
+            <span class="db-kpi-label">Low Stock</span>
+            <span class="db-kpi-icon">!</span>
+        </div>
+        <div class="db-kpi-value">{{ number_format($lowStockCount) }}</div>
+        <div class="db-kpi-note">Needs restocking</div>
+        <div class="db-kpi-bar"></div>
+    </a>
+    <a class="db-kpi" href="{{ route('products.index', ['stock_status' => 'out-of-stock']) }}" style="--kpi-accent:#cc4a44;--kpi-soft:#fbe9e7">
+        <div class="db-kpi-top">
+            <span class="db-kpi-label">Out of Stock</span>
+            <span class="db-kpi-icon">×</span>
+        </div>
+        <div class="db-kpi-value">{{ number_format($outOfStockCount) }}</div>
+        <div class="db-kpi-note">Unavailable products</div>
+        <div class="db-kpi-bar"></div>
+    </a>
+</div>
+
+{{-- ── Main Grid ── --}}
+<div class="db-main">
+
+    {{-- Donut chart panel --}}
+    <div class="db-panel">
+        <div class="db-panel-head">
+            <h2>Inventory Status</h2>
+            <span>Product count by stock level</span>
+        </div>
+        <div class="db-donut-body">
+            <div class="db-donut-wrap">
+                <div class="db-donut" role="img" aria-label="{{ $inStockCount }} in stock, {{ $lowStockCount }} low, {{ $outOfStockCount }} out"></div>
+                <div class="db-donut-center">
+                    <strong>{{ number_format($productCount) }}</strong>
+                    <span>products</span>
+                </div>
+            </div>
+            <div class="db-legend">
+                <div class="db-legend-item">
+                    <div class="db-legend-row" style="--dot:#25846e">
+                        <span class="db-legend-dot"></span><span>In stock</span><strong>{{ $inStockCount }}</strong>
+                    </div>
+                    <div class="db-legend-sub">{{ $inPercent }}% of catalog</div>
+                    <div class="db-legend-bar" style="--dot:#25846e"><span style="--w:{{ $inPercent }}%"></span></div>
+                </div>
+                <div class="db-legend-item">
+                    <div class="db-legend-row" style="--dot:#e2a32b">
+                        <span class="db-legend-dot"></span><span>Low stock</span><strong>{{ $lowStockCount }}</strong>
+                    </div>
+                    <div class="db-legend-sub">{{ $lowPercent }}% of catalog</div>
+                    <div class="db-legend-bar" style="--dot:#e2a32b"><span style="--w:{{ $lowPercent }}%"></span></div>
+                </div>
+                <div class="db-legend-item">
+                    <div class="db-legend-row" style="--dot:#d95750">
+                        <span class="db-legend-dot"></span><span>Out of stock</span><strong>{{ $outOfStockCount }}</strong>
+                    </div>
+                    <div class="db-legend-sub">{{ $outPercent }}% of catalog</div>
+                    <div class="db-legend-bar" style="--dot:#d95750"><span style="--w:{{ $outPercent }}%"></span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Metric cards --}}
+    <div class="db-metric-stack">
+        <div class="db-metric db-metric--teal">
+            <div class="db-metric-label">Total Inventory Value</div>
+            <div class="db-metric-value sm">₱{{ number_format($inventoryValue, 2) }}</div>
+            <div class="db-metric-sub">At selling price</div>
+            <span class="db-metric-icon">₱</span>
+        </div>
+        <div class="db-metric db-metric--blue">
+            <div class="db-metric-label">Active Stock Lots</div>
+            <div class="db-metric-value">{{ number_format($activeLots) }}</div>
+            <div class="db-metric-sub">Available batches</div>
+            <span class="db-metric-icon">▣</span>
+        </div>
+        <div class="db-metric db-metric--red">
+            <div class="db-metric-label">Expiring in 30 Days</div>
+            <div class="db-metric-value">{{ number_format($expiring30DayCount) }}</div>
+            <div class="db-metric-sub">Batches to review</div>
+            <span class="db-metric-icon">!</span>
+        </div>
+        <a class="db-metric db-metric--amber db-metric-link" href="{{ route('adjustments.index') }}">
+            <div class="db-metric-label">Pending Adjustments</div>
+            <div class="db-metric-value">{{ number_format($pendingAdjustments) }}</div>
+            <div class="db-metric-sub">{{ $user?->role === 'admin' ? 'Awaiting review' : 'Your requests' }}</div>
+            <span class="db-metric-icon">↗</span>
+        </a>
+    </div>
+</div>
+
+{{-- ── Quick Actions ── --}}
+<div class="db-actions">
+    <div class="db-actions-head">
+        <h2>Quick Actions</h2>
+    </div>
+    <div class="db-actions-grid">
+        <a class="db-action-link" href="{{ route('products.create') }}">
+            <span class="db-action-icon">+</span>
+            <span class="db-action-name">Add Product</span>
+            <span class="db-action-hint">New catalog item</span>
+        </a>
+        <a class="db-action-link" href="{{ route('stock-ins.create') }}">
+            <span class="db-action-icon">↓</span>
+            <span class="db-action-name">Stock In</span>
+            <span class="db-action-hint">Record delivery</span>
+        </a>
+        <a class="db-action-link" href="{{ route('sales-orders.create') }}">
+            <span class="db-action-icon">◎</span>
+            <span class="db-action-name">New Order</span>
+            <span class="db-action-hint">Create sales order</span>
+        </a>
+        <a class="db-action-link" href="{{ route('purchase-orders.index') }}">
+            <span class="db-action-icon">▧</span>
+            <span class="db-action-name">Purchase Orders</span>
+            <span class="db-action-hint">View & manage POs</span>
+        </a>
+        <a class="db-action-link" href="{{ route('reports.index') }}">
+            <span class="db-action-icon">▥</span>
+            <span class="db-action-name">Reports</span>
+            <span class="db-action-hint">Inventory reports</span>
+        </a>
     </div>
 </div>
 @endsection

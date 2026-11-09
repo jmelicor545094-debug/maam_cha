@@ -30,6 +30,10 @@
         .nav-group summary{list-style:none;cursor:pointer}
         .nav-group summary::-webkit-details-marker{display:none}
         .nav-group[open]>summary{background:#164f4e;color:#fff}
+        .nav-group summary.nav-link{display:flex;align-items:center}
+        .nav-toggle{margin-left:auto;flex-shrink:0;width:20px;height:20px;border-radius:5px;background:#1d6b68;color:#a9ddc8;display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;line-height:1;transition:background .15s ease,transform .2s ease}
+        .nav-group[open] .nav-toggle{background:#a9ddc8;color:#0e3e3b;transform:rotate(45deg)}
+        @media(max-width:900px){.nav-toggle{display:none}}
         .nav-submenu{display:grid;gap:2px;padding:3px 0 7px 20px}
         .nav-sublink{display:block;padding:7px 10px;border-radius:4px;color:#c4d9d5;font-size:12px}
         .nav-sublink:hover,.nav-sublink.active{background:#195958;color:#fff}
@@ -103,7 +107,7 @@
         <div class="nav-label">Management</div>
         <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}"><span class="nav-icon">▦</span><span class="nav-text">Dashboard</span></a>
         <details class="nav-group" @if(request()->routeIs('products.*', 'stock-ins.*', 'adjustments.*', 'sales-orders.*')) open @endif>
-            <summary class="nav-link"><span class="nav-icon">&#9638;</span><span class="nav-text">Product Management</span></summary>
+            <summary class="nav-link"><span class="nav-icon">&#9638;</span><span class="nav-text">Product Management</span><span class="nav-toggle">+</span></summary>
             <div class="nav-submenu">
                 <a class="nav-sublink {{ request()->routeIs('products.index', 'products.edit') ? 'active' : '' }}" href="{{ route('products.index') }}">Products</a>
                 <a class="nav-sublink {{ request()->routeIs('products.create') ? 'active' : '' }}" href="{{ route('products.create') }}">Add Product</a>
@@ -117,7 +121,7 @@
         <a class="nav-link {{ request()->routeIs('activity-logs.*') ? 'active' : '' }}" href="{{ route('activity-logs.index') }}"><span class="nav-icon">≋</span><span class="nav-text">Activity logs</span></a>
         @if(optional(auth()->user())->role === 'admin')
         <details class="nav-group" @if(request()->routeIs('reports.*', 'expired-stock.*')) open @endif>
-            <summary class="nav-link"><span class="nav-icon">&#9638;</span><span class="nav-text">Inventory Reports</span></summary>
+            <summary class="nav-link"><span class="nav-icon">&#9638;</span><span class="nav-text">Inventory Reports</span><span class="nav-toggle">+</span></summary>
             <div class="nav-submenu">
                 <a class="nav-sublink {{ request('type') === 'expired-items' ? 'active' : '' }}" href="{{ route('reports.index', ['type' => 'expired-items']) }}">Expired Items</a>
                 <a class="nav-sublink {{ request('type') === 'low-stock' ? 'active' : '' }}" href="{{ route('reports.index', ['type' => 'low-stock']) }}">Low Stock</a>
@@ -127,7 +131,7 @@
         @endif
         @if(optional(auth()->user())->role === 'admin')
         <details class="nav-group" @if(request()->routeIs('permissions.*', 'users.*')) open @endif>
-            <summary class="nav-link"><span class="nav-icon">&#9881;</span><span class="nav-text">Access Control</span></summary>
+            <summary class="nav-link"><span class="nav-icon">&#9881;</span><span class="nav-text">Access Control</span><span class="nav-toggle">+</span></summary>
             <div class="nav-submenu">
                 <a class="nav-sublink {{ request()->routeIs('permissions.*') ? 'active' : '' }}" href="{{ route('permissions.index') }}">Permissions</a>
                 <a class="nav-sublink {{ request()->routeIs('users.*') ? 'active' : '' }}" href="{{ route('users.index') }}">Roles</a>
