@@ -11,6 +11,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Render terminates HTTPS at its edge proxy. Trust the forwarded scheme
+        // so Laravel generates secure form actions and session cookies.
+        $middleware->trustProxies(at: '*');
         $middleware->alias(['role' => App\Http\Middleware\EnsureRole::class]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
