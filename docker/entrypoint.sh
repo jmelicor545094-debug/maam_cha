@@ -2,6 +2,6 @@
 set -eu
 
 php artisan migrate --force
-php artisan medcare:create-admin
+php artisan db:seed --force
 
 exec php artisan serve --host=0.0.0.0 --port="${PORT:-10000}"
